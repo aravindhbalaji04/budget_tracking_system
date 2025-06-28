@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Tracker Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        
+        .auth-form { 
+            background: rgba(255, 255, 255, 0.95);  
+            padding: 40px; 
+            margin: 50px auto; 
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .auth-header h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .dashboard {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="authSection" class="auth-form">
+            <div class="auth-header">
+                <h2>Budget Tracker Pro</h2>
+                <p>Take control of your finances</p>
+            </div>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="income">Monthly Income:</label>
+                <input type="number" id="income" placeholder="Enter your monthly income" required>
+            </div>
+            <div class="form-group">
+                <label for="savingsGoal">Savings Goal (%):</label>
+                <input type="number" id="savingsGoal" placeholder="20" min="0" max="100" value="20">
+            </div>
+            <div class="form-group">
+                <label for="portfolioGoal">Monthly Portfolio Investment ($):</label>
+                <input type="number" id="portfolioGoal" placeholder="500" min="0" step="0.01">
+            </div>
+            <button onclick="login()" class="login-btn">
+                Login
+            </button>
+        </div>
+        
+        <div id="dashboardSection" class="dashboard hidden">
+            <h2>Welcome to your Dashboard!</h2>
+            <p>Dashboard is working correctly.</p>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        
+        function login() {
+            const username = document.getElementById('username').value;
+            const income = parseFloat(document.getElementById('income').value);
+            const savingsGoal = parseFloat(document.getElementById('savingsGoal').value) || 20;
+            const portfolioGoal = parseFloat(document.getElementById('portfolioGoal').value) || 0;
+            
+            if (!username || !income) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            currentUser = {
+                username,
+                income,
+                savingsGoal,
+                portfolioGoal
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showDashboard();
+        }
+        
+        function showDashboard() {
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+        }
+        
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('dashboardSection').classList.add('hidden');
+            
+            // Clear form
+            document.getElementById('username').value = '';
+            document.getElementById('income').value = '';
+            document.getElementById('savingsGoal').value = '20';
+            document.getElementById('portfolioGoal').value = '';
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded successfully');
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showDashboard();
+            }
+        });
+    </script>
+</body>
+</html>

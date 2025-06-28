@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Tracker Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="authSection" class="auth-form">
+            <div class="auth-header">
+                <i class="fas fa-wallet"></i>
+                <h2>Budget Tracker Pro</h2>
+                <p>Take control of your finances</p>
+            </div>
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> Username:</label>
+                <input type="text" id="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="income"><i class="fas fa-dollar-sign"></i> Monthly Income:</label>
+                <input type="number" id="income" placeholder="Enter your monthly income" required>
+            </div>
+            <div class="form-group">
+                <label for="savingsGoal"><i class="fas fa-piggy-bank"></i> Savings Goal (%):</label>
+                <input type="number" id="savingsGoal" placeholder="20" min="0" max="100" value="20">
+            </div>
+            <div class="form-group">
+                <label for="portfolioGoal"><i class="fas fa-chart-line"></i> Monthly Portfolio Investment ($):</label>
+                <input type="number" id="portfolioGoal" placeholder="500" min="0" step="0.01">
+            </div>
+            <button onclick="login()" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <button onclick="clearAllData()" class="clear-data-btn" style="margin-top: 10px; background: #6c757d;">
+                <i class="fas fa-trash"></i> Clear All Data
+            </button>
+        </div>
+        <div id="dashboardSection" class="dashboard hidden" style="display: none !important;">
+            <div class="dashboard-header">
+                <div class="header-left">
+                    <h2><i class="fas fa-chart-line"></i> Budget Dashboard</h2>
+                    <div class="date-display">
+                        <i class="fas fa-calendar"></i>
+                        <span id="currentDate"></span>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card income">
+                    <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="stat-content">
+                        <h3>Monthly Income</h3>
+                        <p class="stat-value">$<span id="userIncome"></span></p>
+                    </div>
+                </div>
+                <div class="stat-card expenses">
+                    <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="stat-content">
+                        <h3>Total Expenses</h3>
+                        <p class="stat-value">$<span id="totalExpenses">0</span></p>
+                    </div>
+                </div>
+                <div class="stat-card remaining">
+                    <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                    <div class="stat-content">
+                        <h3>Remaining Budget</h3>
+                        <p class="stat-value">$<span id="remainingBudget">0</span></p>
+                    </div>
+                </div>
+                <div class="stat-card savings">
+                    <div class="stat-icon"><i class="fas fa-piggy-bank"></i></div>
+                    <div class="stat-content">
+                        <h3>Savings Goal</h3>
+                        <p class="stat-value">$<span id="savingsGoalAmount">0</span></p>
+                    </div>
+                </div>
+                <div class="stat-card portfolio">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-content">
+                        <h3>Portfolio Value</h3>
+                        <p class="stat-value">$<span id="portfolioValue">0</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-info">
+                <div class="welcome-section">
+                    <h3><i class="fas fa-user-circle"></i> Welcome, <span id="userName"></span></h3>
+                    <div class="progress-section">
+                        <div class="progress-item">
+                            <span>Budget Used:</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="budgetProgress"></div>
+                            </div>
+                            <span id="budgetPercentage">0%</span>
+                        </div>
+                        <div class="progress-item">
+                            <span>Savings Progress:</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill savings-progress" id="savingsProgress"></div>
+                            </div>
+                            <span id="savingsPercentage">0%</span>
+                        </div>
+                        <div class="progress-item">
+                            <span>Portfolio Investment:</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill portfolio-progress" id="portfolioProgress"></div>
+                            </div>
+                            <span id="portfolioPercentage">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Section -->
+            <div class="portfolio-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-briefcase"></i> Portfolio Management</h3>
+                    <button class="toggle-btn" onclick="togglePortfolioSection()" id="portfolioToggle">
+                        <i class="fas fa-chevron-down"></i> Show Details
+                    </button>
+                </div>
+                <div id="portfolioDetails" class="portfolio-details hidden">
+                    <div class="portfolio-stats">
+                        <div class="portfolio-card">
+                            <h4><i class="fas fa-plus-circle"></i> Monthly Investment</h4>
+                            <p>$<span id="monthlyInvestment">0</span></p>
+                        </div>
+                        <div class="portfolio-card">
+                            <h4><i class="fas fa-chart-area"></i> Total Invested</h4>
+                            <p>$<span id="totalInvested">0</span></p>
+                        </div>
+                        <div class="portfolio-card">
+                            <h4><i class="fas fa-percentage"></i> Current Value</h4>
+                            <p>$<span id="currentPortfolioValue">0</span></p>
+                        </div>
+                        <div class="portfolio-card">
+                            <h4><i class="fas fa-chart-line"></i> Total Gains/Loss</h4>
+                            <p class="portfolio-gains">$<span id="totalGains">0</span> (<span id="gainsPercentage">0%</span>)</p>
+                        </div>
+                        <div class="portfolio-card">
+                            <h4><i class="fas fa-calendar-check"></i> Active Investments</h4>
+                            <p><span id="activeInvestments">0</span> positions</p>
+                        </div>
+                    </div>
+                    <div class="portfolio-actions">
+                        <div class="investment-form">
+                            <h4><i class="fas fa-plus-circle"></i> Add Investment</h4>
+                            <div class="investment-inputs">
+                                <div class="form-group">
+                                    <label for="investmentType"><i class="fas fa-chart-pie"></i> Investment Type:</label>
+                                    <select id="investmentType">
+                                        <option value="stocks">Stocks (Expected: 10-12% annually)</option>
+                                        <option value="bonds">Bonds (Expected: 4-6% annually)</option>
+                                        <option value="mutual_funds">Mutual Funds (Expected: 8-10% annually)</option>
+                                        <option value="etf">ETF (Expected: 7-9% annually)</option>
+                                        <option value="crypto">Cryptocurrency (High Risk/Reward)</option>
+                                        <option value="real_estate">Real Estate (Expected: 6-8% annually)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="investmentAmount"><i class="fas fa-dollar-sign"></i> Investment Amount:</label>
+                                    <input type="number" id="investmentAmount" placeholder="500" step="0.01" min="1">
+                                </div>
+                                <div class="form-group">
+                                    <label for="investmentDate"><i class="fas fa-calendar"></i> Investment Date:</label>
+                                    <input type="date" id="investmentDate">
+                                </div>
+                            </div>
+                            <div class="investment-actions">
+                                <button class="add-btn" onclick="addInvestment()">
+                                    <i class="fas fa-plus"></i> Add Investment
+                                </button>
+                                <button class="calculate-btn" onclick="calculatePortfolioGrowth()">
+                                    <i class="fas fa-calculator"></i> Recalculate
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="investment-history">
+                            <h4><i class="fas fa-history"></i> Investment History</h4>
+                            <div id="investmentHistoryList" class="investment-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Insights Section -->
+            <div class="insights-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-lightbulb"></i> Financial Insights</h3>
+                    <div class="alerts-container" id="alertsContainer"></div>
+                </div>
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Spending Alerts</h4>
+                        <div id="spendingAlerts" class="alert-list"></div>
+                    </div>
+                    <div class="insight-card">
+                        <h4><i class="fas fa-chart-bar"></i> Category Analysis</h4>
+                        <div id="categoryAnalysis" class="analysis-content"></div>
+                    </div>
+                    <div class="insight-card">
+                        <h4><i class="fas fa-target"></i> Recommendations</h4>
+                        <div id="recommendations" class="recommendations-list"></div>
+                    </div>
+                    <div class="insight-card">
+                        <h4><i class="fas fa-calendar-alt"></i> Monthly Comparison</h4>
+                        <div id="monthlyComparison" class="comparison-content"></div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="expense-form">
+                <h3><i class="fas fa-plus-circle"></i> Add New Expense</h3>
+                <div class="expense-inputs">
+                    <div class="form-group">
+                        <label for="expenseFood"><i class="fas fa-utensils"></i> Food:</label>
+                        <input type="number" id="expenseFood" placeholder="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseTravel"><i class="fas fa-car"></i> Travel:</label>
+                        <input type="number" id="expenseTravel" placeholder="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseEntertainment"><i class="fas fa-film"></i> Entertainment:</label>
+                        <input type="number" id="expenseEntertainment" placeholder="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseMiscellaneous"><i class="fas fa-shopping-bag"></i> Miscellaneous:</label>
+                        <input type="number" id="expenseMiscellaneous" placeholder="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseDescription"><i class="fas fa-sticky-note"></i> Description:</label>
+                        <input type="text" id="expenseDescription" placeholder="Optional description">
+                    </div>
+                </div>
+                <div class="expense-actions">
+                    <button class="add-btn" onclick="addExpense()">
+                        <i class="fas fa-plus"></i> Add Expense
+                    </button>
+                    <button class="edit-btn" onclick="editExpense()">
+                        <i class="fas fa-edit"></i> Update
+                    </button>
+                    <button class="delete-btn" onclick="deleteExpense()">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <button class="clear-btn" onclick="clearExpenseInputs()">
+                        <i class="fas fa-eraser"></i> Clear
+                    </button>
+                </div>
+            </div>
+            <div class="analytics-section">
+                <div class="month-selector">
+                    <label for="monthSelect"><i class="fas fa-calendar-alt"></i> Select Month:</label>
+                    <select id="monthSelect" onchange="displayExpenses()">
+                        <option value="0">January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                    </select>
+                </div>
+                
+                <div class="view-toggles">
+                    <button class="toggle-btn active" onclick="showTable()" id="tableToggle">
+                        <i class="fas fa-table"></i> Table View
+                    </button>
+                    <button class="toggle-btn" onclick="showChart()" id="chartToggle">
+                        <i class="fas fa-chart-pie"></i> Chart View
+                    </button>
+                </div>
+            </div>
+
+            <div id="tableView" class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> Expense History</h3>
+                    <div class="table-actions">
+                        <button onclick="exportData()" class="export-btn">
+                            <i class="fas fa-download"></i> Export CSV
+                        </button>
+                        <button onclick="clearAllExpenses()" class="clear-all-btn">
+                            <i class="fas fa-trash-alt"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+                <table id="expenseTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th><i class="fas fa-utensils"></i> Food</th>
+                            <th><i class="fas fa-car"></i> Travel</th>
+                            <th><i class="fas fa-film"></i> Entertainment</th>
+                            <th><i class="fas fa-shopping-bag"></i> Miscellaneous</th>
+                            <th>Description</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenseTableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="chartView" class="chart-container hidden">
+                <div class="chart-header">
+                    <h3><i class="fas fa-chart-pie"></i> Expense Analytics</h3>
+                </div>
+                <div class="charts-grid">
+                    <div class="chart-item">
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                    <div class="chart-item">
+                        <canvas id="monthlyTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js" defer></script>
+</body>
+</html>
