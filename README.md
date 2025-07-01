@@ -6,6 +6,7 @@ A modern, comprehensive budget tracking application with portfolio management, r
 
 - **Smart Budget Tracking**: Track expenses across categories with real-time budget monitoring
 - **Portfolio Management**: Invest in stocks, bonds, ETFs, crypto with realistic growth simulation
+- **🤖 AI Financial Advisor**: Get personalized financial advice from your AI chatbot assistant
 - **Financial Insights**: AI-powered spending alerts and recommendations
 - **Cloud Sync**: Your data is safely stored in the cloud and synced across devices
 - **Modern UI**: Beautiful, responsive design that works on all devices
@@ -27,6 +28,7 @@ Visit: [Your App URL will be here]
 - **Frontend**: Vanilla JavaScript, HTML5, CSS3
 - **Charts**: Chart.js
 - **Icons**: Font Awesome
+- **AI**: OpenAI GPT-3.5 Turbo (optional) + Local AI responses
 - **Hosting**: Vercel
 - **Database**: Supabase (PostgreSQL)
 - **Build Tool**: Vite

@@ -43,6 +43,20 @@
    - Add:
      - `VITE_SUPABASE_URL`: Your Supabase URL
      - `VITE_SUPABASE_ANON_KEY`: Your Supabase anon key
+     - `VITE_OPENAI_API_KEY`: Your OpenAI API key (optional)
+
+### Step 4: Setup AI Chatbot (Optional)
+
+1. **Get OpenAI API Key** (for advanced AI features)
+   - Go to [platform.openai.com](https://platform.openai.com)
+   - Create account → API Keys → Create new key
+   - Copy your API key
+
+2. **Add to Environment Variables**
+   - In Vercel: Add `VITE_OPENAI_API_KEY`
+   - Or in local `.env`: `VITE_OPENAI_API_KEY=your_key`
+
+**Note**: Chatbot works without OpenAI - it has built-in local AI responses!
 
 ### Step 3: Update Database Configuration
 

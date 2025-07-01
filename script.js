@@ -1,3 +1,6 @@
+// Import the chatbot
+import { FinancialAdvisorBot } from './chatbot.js';
+
 let currentUser = null;
 let expenses = JSON.parse(localStorage.getItem('expenses')) || {};
 let portfolio = JSON.parse(localStorage.getItem('portfolio')) || { 
@@ -49,6 +52,9 @@ const investmentTypes = {
         color: '#26de81' 
     }
 };
+
+// Global chatbot instance
+let financialBot = null;
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
@@ -132,6 +138,15 @@ function showDashboard() {
     updatePortfolioDisplay();
     displayExpenses();
     updateFinancialInsights();
+    
+    // Initialize AI Financial Advisor Bot
+    if (!financialBot) {
+        financialBot = new FinancialAdvisorBot(currentUser, expenses, portfolio);
+        financialBot.initChatbot();
+    } else {
+        // Update chatbot context with latest data
+        financialBot.updateContext(currentUser, expenses, portfolio);
+    }
 }
 
 function logout() {
